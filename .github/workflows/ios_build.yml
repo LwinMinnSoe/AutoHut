@@ -2,37 +2,35 @@ name: iOS Build
 
 on:
   push:
-    branches: [ "main" ] # 'master' branch သုံးရင် 'master' လို့ ပြင်ပေးပါ
+    branches: [ "main" ]
 
 jobs:
   build:
-    runs-on: macos-latest # နောက်ဆုံးပေါ် macOS ကို သုံးမယ်လို့ ကြေညာတာပါ
+    runs-on: macos-latest
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+    - name: Checkout Code
+      uses: actions/checkout@v4
 
-      - name: Set up Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: '17'
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '17'
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable' # Stable version ကို သုံးပါမယ်
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable'
 
-      - name: Install Dependencies
-        run: flutter pub get
+    - name: Install Dependencies
+      run: flutter pub get
 
-      - name: Build iOS (No Code Signature)
-        # Apple Developer Account မချိတ်ရသေးခင် စမ်းသပ် Build တာဖြစ်လို့ --no-codesign ထည့်ထားပါတယ်
-        run: flutter build ios --release --no-codesign
+    - name: Build iOS (No Code Signature)
+      run: flutter build ios --release --no-codesign 
 
-      - name: Upload Build Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: ios-app-build
-          # Build ပြီးထွက်လာမယ့် ဖိုင်ကို Download ဆွဲလို့ရအောင် လုပ်ပေးတာပါ
-          path: build/ios/iphoneos/Runner.app
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ios-app-build
+        path: build/ios/iphoneos/Runner.app
