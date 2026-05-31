@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "841915801580",
+    "project_id": "autohut-60d7a",
+    "storage_bucket": "autohut-60d7a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:841915801580:android:448ddd41259458c1442ac9",
+        "android_client_info": {
+          "package_name": "com.example.autohut"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJQi_RfuAMCeWcQmpWmpJiN1EGdtEMgV4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
