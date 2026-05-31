@@ -120,7 +120,7 @@ class AppProvider extends ChangeNotifier {
       _parts = snap.docs.map((d) => PartModel.fromJson({...d.data(), 'id': d.id})).toList();
       if (!_loaded) {
         _loaded = true;
-        if (_parts.isEmpty) _seedSampleData();
+        // if (_parts.isEmpty) _seedSampleData();
       }
       notifyListeners();
     }, onError: (e) {
@@ -299,7 +299,7 @@ class AppProvider extends ChangeNotifier {
     return result;
   }
 
-  Future<void> _seedSampleData() async {
+  /* Future<void> _seedSampleData() async {
     final now = DateTime.now();
     final sample = [
       PartModel(name:'Brake Pad Set', serialNumber:'BP-2024-001', modelNumber:'TRW-GDB1234', years:'2018-2023', category:'Brakes', carBrand:'Toyota', carModel:'Camry', stock:22, sold:0, price:45000, createdAt:now.subtract(const Duration(days:90))),
@@ -309,7 +309,7 @@ class AppProvider extends ChangeNotifier {
     for (final p in sample) batch.set(_db.collection('parts').doc(p.id), p.toJson());
     batch.set(_db.doc('config/settings'), {'categories': _categories, 'brands': _brands});
     await batch.commit();
-  }
+  } */
 
   Future<void> deleteCategory(String category) async {
     _categories.remove(category); notifyListeners();
