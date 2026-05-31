@@ -26,6 +26,10 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
+      # Firebase SDK Error ကို ရှင်းလင်းရန် CocoaPods ကို Update လုပ်ပေးခြင်း
+      - name: Update CocoaPods Specs
+        run: pod repo update
+
       - name: Build iOS (No Code Signature)
         run: flutter build ios --release --no-codesign
 
