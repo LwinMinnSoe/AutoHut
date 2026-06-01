@@ -8,6 +8,8 @@ import '../models/part_model.dart';
 import '../theme/app_theme.dart';
 import '../utils/media_utils.dart';
 import 'media_viewer_screen.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 
 class AddEditPartScreen extends StatefulWidget {
   final PartModel? part;
@@ -51,7 +53,39 @@ class _State extends State<AddEditPartScreen> {
     super.dispose();
   }
 
+  // ── Platform-aware media picker ──────────────────────────
   Future<void> _pickMedia(int slot, {required bool isVideo}) async {
+    // macOS / Windows / Linux → file_picker
+    if (defaultTargetPlatform == TargetPlatform.macOS ||
+        defaultTargetPlatform == TargetPlatform.windows ||
+        defaultTargetPlatform == TargetPlatform.linux) {
+      await _pickMediaDesktop(slot, isVideo: isVideo);
+    } else {
+      // iOS / Android → image_picker
+      await _pickMediaMobile(slot, isVideo: isVideo);
+    }
+  }
+
+  Future<void> _pickMediaDesktop(int slot, {required bool isVideo}) async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: isVideo
+          ? ['mp4', 'mov', 'avi', 'mkv', 'm4v']
+          : ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+      allowMultiple: false,
+    );
+    if (result != null &&
+        result.files.isNotEmpty &&
+        result.files.first.path != null) {
+      final path = result.files.first.path!;
+      if (mounted) setState(() {
+        if (slot < _mediaPaths.length) _mediaPaths[slot] = path;
+        else _mediaPaths.add(path);
+      });
+    }
+  }
+
+  Future<void> _pickMediaMobile(int slot, {required bool isVideo}) async {
     final picker = ImagePicker();
     final file = isVideo
         ? await picker.pickVideo(source: ImageSource.gallery)
@@ -65,6 +99,32 @@ class _State extends State<AddEditPartScreen> {
   }
 
   void _showPickerSheet(int slot) {
+    if (defaultTargetPlatform == TargetPlatform.macOS ||
+        defaultTargetPlatform == TargetPlatform.windows) {
+      // Desktop: simple dialog
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text('Add Media'),
+          actions: [
+            TextButton(
+              onPressed: () { Navigator.pop(context); _pickMediaDesktop(slot, isVideo: false); },
+              child: const Text('📷 Photo'),
+            ),
+            TextButton(
+              onPressed: () { Navigator.pop(context); _pickMediaDesktop(slot, isVideo: true); },
+              child: const Text('🎬 Video'),
+            ),
+            if (slot < _mediaPaths.length)
+              TextButton(
+                onPressed: () { Navigator.pop(context); setState(() => _mediaPaths.removeAt(slot)); },
+                child: const Text('🗑 Remove', style: TextStyle(color: Colors.red)),
+              ),
+          ],
+        ),
+      );
+      return;
+    }
     showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.white,
